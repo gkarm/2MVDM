@@ -41,7 +41,7 @@
         <activity
             android:name=".AllUsersActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".ShowCaptureActivity"></activity>
+        <activity android:name=".ShowCaptureActivity" />
     </application>
 
 </manifest>
