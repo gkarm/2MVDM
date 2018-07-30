@@ -17,11 +17,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Matrix;
+
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.util.Iterator;
 
 import static com.example.jlapa.mvdm.R.*;
 
@@ -30,6 +40,8 @@ import static com.example.jlapa.mvdm.R.*;
  * A simple {@link Fragment} subclass.
  */
 public class CameraFragment extends Fragment implements SurfaceHolder.Callback{
+
+
     Camera camera;
 
     Camera.PictureCallback jpegCallback;
@@ -65,6 +77,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback{
         }
 
         Button mLogout = view.findViewById(R.id.logout);
+        Button mFindUsers = view.findViewById(id.findUsers);
         Button mCapture = view.findViewById(R.id.capture);
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +85,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback{
                 Logout();
             }
         });
+
         mCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,6 +96,12 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback{
         jpegCallback = new Camera.PictureCallback(){
             @Override
             public void onPictureTaken(byte[] bytes, Camera camera) {
+
+                Bitmap decodeBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                Bitmap rotateBitmap = rotate(decodeBitmap);
+
+                String fileLocation = SaveImageToStorage(rotateBitmap);
                 Intent intent = new Intent(getActivity(), ShowCaptureActivity.class);
                 intent.putExtra("capture",bytes);
                 startActivity(intent);
@@ -97,6 +117,32 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback{
 
 
 
+    }
+
+    private String SaveImageToStorage(Bitmap bitmap) {
+        String fileName = "imageToSend";
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            FileOutputStream fo = getContext().openFileOutput(fileName, Context.MODE_PRIVATE);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fileName = null;
+        }
+        return fileName;
+    }
+
+    private Bitmap rotate(Bitmap decodeBitmap) {
+
+        int w = decodeBitmap.getWidth();
+        int h = decodeBitmap.getHeight();
+
+        Matrix matrix = new Matrix();
+        matrix.setRotate(90);
+
+        return Bitmap.createBitmap(decodeBitmap, 0, 0, w, h, matrix, true);
     }
 
     private void captureImage() {
@@ -166,6 +212,8 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback{
             }
         }
     }
+
+
     private void Logout() {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(getContext(), WelcomeActivity.class);
