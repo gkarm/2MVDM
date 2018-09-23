@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.jlapa.mvdm">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -42,6 +43,7 @@
             android:name=".AllUsersActivity"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".ShowCaptureActivity" />
+        <activity android:name=".ChooseReceiverActivity" />
     </application>
 
 </manifest>
