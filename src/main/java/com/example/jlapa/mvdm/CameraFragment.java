@@ -102,19 +102,18 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback{
                 Bitmap rotateBitmap = rotate(decodeBitmap);
 
                 String fileLocation = SaveImageToStorage(rotateBitmap);
-                Intent intent = new Intent(getActivity(), ShowCaptureActivity.class);
-                intent.putExtra("capture",bytes);
-                startActivity(intent);
-                return;
+                if (fileLocation!= null) {
+                    Intent intent = new Intent(getActivity(), ShowCaptureActivity.class);
+
+                    startActivity(intent);
+                    return;
+                }
             }
         };
 
 
 
         return view;
-
-
-
 
 
     }
